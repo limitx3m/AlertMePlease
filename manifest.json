@@ -3,6 +3,9 @@
     "description": "This can be used to alert when a number reaches a certain level",
     "version": "1.0",
     "manifest_version": 3,
+    "host_permission": [
+        "https://app.uniswap.org/*/*"
+    ],
     "background": {
         "service_worker": "background.js"
     },
