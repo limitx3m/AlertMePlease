@@ -39,7 +39,7 @@ alertButton.addEventListener("click", alert_click);
 
 
 // Mutation Observer
-const observer = new MutationObserver(mutationCallback);
+const observer = new MutationObserver(on_mutation);
 
 
 /**
@@ -48,10 +48,15 @@ const observer = new MutationObserver(mutationCallback);
 function alert_click() {
     if(alertButton.value == "Set") {
         observer.observe(swapOutputInputBox, { attributes: true });
+        document.body.style.backgroundColor = "green";
+        inputAbove.disabled = true;
+        inputBelow.disabled = true;
         alertButton.value = "Stop"
     } else {
         observer.disconnect();
         document.body.style.backgroundColor = "";
+        inputAbove.disabled = false;
+        inputBelow.disabled = false;
         alertButton.value = "Set"
     }
 };
@@ -63,7 +68,23 @@ function add_elements(element) {
     parent.appendChild(alertButton);
 };
 
-function mutationCallback(mutationsList) {
+function on_new_price(price) {
+    console.log("new:", price);
+
+    if (inputAbove.value && price > inputAbove.value) {
+        console.log("above:", inputAbove.value);
+        snd_above.play();
+        document.body.style.backgroundColor = "blue";
+    }
+
+    if (inputBelow.value && price < inputBelow.value) {
+        console.log("below:", inputBelow.value);
+        snd_below.play();
+        document.body.style.backgroundColor = "red";
+    } 
+}
+
+function on_mutation(mutationsList) {
     for (const mutation of mutationsList) {
         if (
             mutation.type !== "attributes" ||
@@ -73,29 +94,12 @@ function mutationCallback(mutationsList) {
         }
 
         const newPrice = mutation.target.getAttribute("value");
-
-        if (newPrice) {
-            console.log("new:", newPrice);
-
-            if (inputAbove.value && newPrice > inputAbove.value) {
-            console.log("ABOVE");
-            console.log("above:", inputAbove.value);
-            snd_above.play();
-            document.body.style.backgroundColor = "blue";
-            }
-
-            if (inputBelow.value && newPrice < inputBelow.value) {
-            console.log("BELOW");
-            console.log("below:", inputBelow.value);
-            snd_below.play();
-            document.body.style.backgroundColor = "red";
-            }
-        }
+        if (newPrice) on_new_price(newPrice);
     }
 };
 
 /**
- * Execute
+ * Executables
  */
 add_elements(swapOutput);
 
