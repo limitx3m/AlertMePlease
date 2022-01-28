@@ -3,7 +3,8 @@
  */
 
 // Sound URLS
-const above_mp3_url = "https://freesound.org/data/previews/91/91926_7037-lq.mp3";
+const above_mp3_url =
+  "https://freesound.org/data/previews/135/135613_2477074-lq.mp3";
 const below_mp3_url =  "https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3";
  
 // Sound Objects
@@ -41,6 +42,12 @@ alertButton.addEventListener("click", alert_click);
 // Mutation Observer
 const observer = new MutationObserver(on_mutation);
 
+/**
+ * Interval setup
+ */
+
+let nIntervId;
+let direction = 0;
 
 /**
  * Functions
@@ -53,6 +60,10 @@ function alert_click() {
         inputBelow.disabled = true;
         alertButton.value = "Stop"
     } else {
+        if (nIntervId) {
+            clearInterval(nIntervId);
+            nIntervId = null;
+        }
         observer.disconnect();
         document.body.style.backgroundColor = "";
         inputAbove.disabled = false;
@@ -68,18 +79,48 @@ function add_elements(element) {
     parent.appendChild(alertButton);
 };
 
+function play_sound() {
+    if(direction == 1) {
+      snd_above.play();
+    }
+
+    if (direction == -1) {
+      snd_below.play();
+    }
+}
+
 function on_new_price(price) {
-    console.log("new:", price);
+    // console.log("new:", price);
 
     if (inputAbove.value && price > inputAbove.value) {
-        console.log("above:", inputAbove.value);
-        snd_above.play();
+        // console.log("above:", inputAbove.value);
+        if (!nIntervId) {
+            direction = 1;
+            nIntervId = setInterval(play_sound, 1000);
+        }
+        else if (nIntervId && direction == -1) {
+            clearInterval(nIntervId);
+            nIntervId = null;
+            direction = 1;
+            nIntervId = setInterval(play_sound, 1000);
+        }
+        // snd_above.play();
         document.body.style.backgroundColor = "blue";
     }
 
     if (inputBelow.value && price < inputBelow.value) {
-        console.log("below:", inputBelow.value);
-        snd_below.play();
+        // console.log("below:", inputBelow.value);
+        if (!nIntervId) {
+            direction = -1;
+            nIntervId = setInterval(play_sound, 1000);
+        }
+        else if (nIntervId && direction == 1) {
+            clearInterval(nIntervId);
+            nIntervId = null;
+            direction = -1;
+            nIntervId = setInterval(play_sound, 1000);
+        }
+        // snd_below.play();
         document.body.style.backgroundColor = "red";
     } 
 }
