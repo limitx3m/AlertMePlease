@@ -1,84 +1,103 @@
+/**
+ * Sound 
+ */
+
 // Sound URLS
 const above_mp3_url = "https://freesound.org/data/previews/91/91926_7037-lq.mp3";
 const below_mp3_url =  "https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3";
  
 // Sound Objects
-var snd_above = new Audio(above_mp3_url);    
-var snd_below = new Audio(below_mp3_url);    
+const snd_above = new Audio(above_mp3_url);    
+const snd_below = new Audio(below_mp3_url);    
 
-function button_click() {
-//   console.log("here");
-//   document.body.style.backgroundColor = "blue";
-  snd_above.play();
-}
+/**
+ * Dom Elements 
+ */ 
 
-///
-
-const swapInput = document.getElementById("swap-currency-input");
+// Swap Output Element
 const swapOutput = document.getElementById("swap-currency-output");
 
-const parent = swapOutput.parentElement;
+// Swap Output's Input
+const swapOutputInputBox = swapOutput.getElementsByTagName("input")[0];
 
-let inputAbove = document.createElement("input");
+// Input for above price
+const inputAbove = document.createElement("input");
 inputAbove.type = "number";
-inputAbove.id = "above";
 inputAbove.placeholder = "Insert Above Price";
 
-
-let inputBelow = document.createElement("input");
+// Input for below price
+const inputBelow = document.createElement("input");
 inputBelow.type = "number";
-inputBelow.id = "below";
 inputBelow.placeholder = "Insert Below Price";
 
-
-let alertButton = document.createElement("input");
+// Input Toggle Button for alerts
+const alertButton = document.createElement("input");
 alertButton.type = "button";
 alertButton.value = "Set";
-
-alertButton.addEventListener("click", button_click);
-
-parent.appendChild(inputAbove);
-parent.appendChild(inputBelow);
-parent.appendChild(alertButton);
+alertButton.id = "alertbutton";
+alertButton.addEventListener("click", alert_click);
 
 
-const test = swapOutput.getElementsByTagName("input")[0];
+// Mutation Observer
+const observer = new MutationObserver(mutationCallback);
 
 
-const mutationCallback = (mutationsList) => {
-  for (const mutation of mutationsList) {
-    if (
-      mutation.type !== "attributes" ||
-      mutation.attributeName !== "value"
-    ) {
-      return;
+/**
+ * Functions
+ */
+function alert_click() {
+    if(alertButton.value == "Set") {
+        observer.observe(swapOutputInputBox, { attributes: true });
+        alertButton.value = "Stop"
+    } else {
+        observer.disconnect();
+        document.body.style.backgroundColor = "";
+        alertButton.value = "Set"
     }
+};
 
-    const newPrice = mutation.target.getAttribute("value");
+function add_elements(element) {
+    const parent = element.parentElement;
+    parent.appendChild(inputAbove);
+    parent.appendChild(inputBelow);
+    parent.appendChild(alertButton);
+};
 
-    if (newPrice)
-    {
-        console.log("new:", newPrice);
+function mutationCallback(mutationsList) {
+    for (const mutation of mutationsList) {
+        if (
+            mutation.type !== "attributes" ||
+            mutation.attributeName !== "value"
+        ) {
+            return;
+        }
 
-        if(inputAbove.value && newPrice > inputAbove.value)
-        {
+        const newPrice = mutation.target.getAttribute("value");
+
+        if (newPrice) {
+            console.log("new:", newPrice);
+
+            if (inputAbove.value && newPrice > inputAbove.value) {
             console.log("ABOVE");
             console.log("above:", inputAbove.value);
             snd_above.play();
             document.body.style.backgroundColor = "blue";
-        }
+            }
 
-        if(inputBelow.value && newPrice < inputBelow.value)
-        {
+            if (inputBelow.value && newPrice < inputBelow.value) {
             console.log("BELOW");
             console.log("below:", inputBelow.value);
             snd_below.play();
             document.body.style.backgroundColor = "red";
+            }
         }
-    }    
-  }
+    }
 };
 
-const observer = new MutationObserver(mutationCallback);
+/**
+ * Execute
+ */
+add_elements(swapOutput);
 
-observer.observe(test, { attributes: true});
+
+
