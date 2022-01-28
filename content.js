@@ -1,23 +1,23 @@
-console.log("TEST")
-var mp3_url =
-  "https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3";
-var snd = new Audio(mp3_url);    
+// Sound URLS
+const above_mp3_url = "https://freesound.org/data/previews/91/91926_7037-lq.mp3";
+const below_mp3_url =  "https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3";
+ 
+// Sound Objects
+var snd_above = new Audio(above_mp3_url);    
+var snd_below = new Audio(below_mp3_url);    
 
 function button_click() {
 //   console.log("here");
 //   document.body.style.backgroundColor = "blue";
-  snd.play();
+  snd_above.play();
 }
 
 ///
 
 const swapInput = document.getElementById("swap-currency-input");
 const swapOutput = document.getElementById("swap-currency-output");
-const swapButton = document.getElementById("swap-button");
 
-const parent = swapButton.parentElement;
-const next = swapButton.nextSibling;
-
+const parent = swapOutput.parentElement;
 
 let inputAbove = document.createElement("input");
 inputAbove.type = "number";
@@ -44,15 +44,7 @@ parent.appendChild(alertButton);
 
 const test = swapOutput.getElementsByTagName("input")[0];
 
-// test.onchange = () => console.log("change");
-// test.addEventListener('change', () => console.log(`change: ${test.value}`), false);
-// observer.observe(test, { childList: true, subtree: true})
-// observe everything except attributes
-// observer.observe(elemId, {
-// childList: true, // observe direct children
-// subtree: true, // lower descendants too
-// characterDataOldValue: true, // pass old data to callback
-// });
+
 const mutationCallback = (mutationsList) => {
   for (const mutation of mutationsList) {
     if (
@@ -61,15 +53,32 @@ const mutationCallback = (mutationsList) => {
     ) {
       return;
     }
-    console.log("old:", mutation.oldValue);
-    console.log("new:", mutation.target.getAttribute("value"));
-    console.log("above:", inputAbove.value)
-    console.log("below:", inputBelow.value)
+
+    const newPrice = mutation.target.getAttribute("value");
+
+    if (newPrice)
+    {
+        console.log("new:", newPrice);
+
+        if(inputAbove.value && newPrice > inputAbove.value)
+        {
+            console.log("ABOVE");
+            console.log("above:", inputAbove.value);
+            snd_above.play();
+            document.body.style.backgroundColor = "blue";
+        }
+
+        if(inputBelow.value && newPrice < inputBelow.value)
+        {
+            console.log("BELOW");
+            console.log("below:", inputBelow.value);
+            snd_below.play();
+            document.body.style.backgroundColor = "red";
+        }
+    }    
   }
 };
 
 const observer = new MutationObserver(mutationCallback);
 
 observer.observe(test, { attributes: true});
-
-setTimeout(() => console.log(test), 3000)
