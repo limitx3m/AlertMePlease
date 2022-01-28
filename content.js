@@ -1,34 +1,12 @@
 console.log("TEST")
-
-// document.body.style.backgroundColor = "blue";
-
-// let button = document.createElement('input');
-// button.type = "number";
-// button.value = "Change background to red";
-
-// let child = document.body.firstChild;
-// let swappage = document.getElementById("swap-page");
-// let parent = swappage.parentElement;
-// let next = swappage.nextSibling;
-// let newbutton = document.createElement("button");
-// let text = document.createTextNode("test");
-
-// button.appendChild(text);
-
-// if(next) parent.insertBefore(newbutton, next)
-// else parent.appendChild(button);
-
-
-// document.body.insertBefore(button, child);
-
-// button.addEventListener("click", button_click);
-
-
-
+var mp3_url =
+  "https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3";
+var snd = new Audio(mp3_url);    
 
 function button_click() {
-  console.log("here");
-  document.body.style.backgroundColor = "blue";
+//   console.log("here");
+//   document.body.style.backgroundColor = "blue";
+  snd.play();
 }
 
 ///
@@ -53,9 +31,15 @@ inputBelow.id = "below";
 inputBelow.placeholder = "Insert Below Price";
 
 
+let alertButton = document.createElement("input");
+alertButton.type = "button";
+alertButton.value = "Set";
+
+alertButton.addEventListener("click", button_click);
 
 parent.appendChild(inputAbove);
 parent.appendChild(inputBelow);
+parent.appendChild(alertButton);
 
 
 const test = swapOutput.getElementsByTagName("input")[0];
@@ -79,6 +63,8 @@ const mutationCallback = (mutationsList) => {
     }
     console.log("old:", mutation.oldValue);
     console.log("new:", mutation.target.getAttribute("value"));
+    console.log("above:", inputAbove.value)
+    console.log("below:", inputBelow.value)
   }
 };
 
