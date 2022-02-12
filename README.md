@@ -1,5 +1,5 @@
 # Alert Me Please
-### Version 1.0
+### Version 1.1
 
 A chrome extension that can be added in developer mode to alert prices on Uniswap with google chrome
 

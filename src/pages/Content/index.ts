@@ -75,7 +75,6 @@ function alert_click() {
 function add_elements(element) {
     const parent = element.parentElement;
     parent.appendChild(inputAbove);
-    parent.appendChild(inputBelow);
     parent.appendChild(alertButton);
 };
 
@@ -90,9 +89,9 @@ function play_sound() {
 }
 
 function on_new_price(price) {
-    // console.log("new:", price);
-
-    if (inputAbove.value && price > inputAbove.value) {
+    let priceNumber = parseFloat(price);
+    let alertValue = parseFloat(inputAbove.value);
+    if ((alertValue) && (priceNumber > alertValue)) {
         // console.log("above:", inputAbove.value);
         if (!nIntervId) {
             direction = 1;
@@ -107,22 +106,6 @@ function on_new_price(price) {
         // snd_above.play();
         document.body.style.backgroundColor = "blue";
     }
-
-    if (inputBelow.value && price < inputBelow.value) {
-        // console.log("below:", inputBelow.value);
-        if (!nIntervId) {
-            direction = -1;
-            nIntervId = setInterval(play_sound, 1000);
-        }
-        else if (nIntervId && direction == 1) {
-            clearInterval(nIntervId);
-            nIntervId = null;
-            direction = -1;
-            nIntervId = setInterval(play_sound, 1000);
-        }
-        // snd_below.play();
-        document.body.style.backgroundColor = "red";
-    } 
 }
 
 function on_mutation(mutationsList) {
@@ -135,6 +118,7 @@ function on_mutation(mutationsList) {
         }
 
         const newPrice = mutation.target.getAttribute("value");
+
         if (newPrice) on_new_price(newPrice);
     }
 };
